@@ -1,0 +1,14 @@
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\sqtest.exe.config
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\sqtest.exe
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\sqtest.pdb
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\EntityFramework.dll
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\System.Data.SQLite.dll
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\EntityFramework.xml
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\System.Data.SQLite.xml
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\obj\Debug\sqtest.exe
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\obj\Debug\sqtest.pdb
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\obj\Debug\sqtest.csprojResolveAssemblyReference.cache
