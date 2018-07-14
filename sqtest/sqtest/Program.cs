@@ -177,7 +177,27 @@ namespace sqtest
                     string Attachment5 = "hdkshkd";
                     string Status = "Message not sent";
                     string SendTime = "";
-                    SQLiteConnection connection = new SQLiteConnection("Data Source=C:\\testik.db; Version=3");
+                    SQLiteConnection connection = new SQLiteConnection("Data Source=\\testik.db; Version=3");
+                    connection.Open();
+                    SQLiteCommand selectid = connection.CreateCommand();
+                    selectid.CommandText = ("SELECT id FROM message ORDER BY id DESC LIMIT 1");
+                    SQLiteDataReader reader4 = selectid.ExecuteReader();
+                    int newid = 0;
+                    foreach (DbDataRecord record in reader4)
+                    {
+                        string idnew;
+                        idnew = record["id"].ToString();
+                        if (string.IsNullOrEmpty(idnew))
+                        {
+                            ID = 0;
+                        }
+                        else
+                        {
+                            newid = Convert.ToInt32(idnew);
+                            ID = newid;
+                        }
+                    }
+                    connection.Close();
                     connection.Open();
                     SQLiteCommand selectuser = connection.CreateCommand();
                     selectuser.CommandText = ("SELECT email FROM users WHERE (email=@email)");
