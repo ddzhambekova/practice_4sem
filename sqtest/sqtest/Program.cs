@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System;
+using System.Threading;
 
 namespace sqtest
 {
@@ -108,6 +109,9 @@ namespace sqtest
             Console.WriteLine("Listening on {0}...", prefix);
             int ID = 0;
 
+            Thread t = new Thread(CheckDBToSend);
+            t.Start();
+
             while (true)
             {
                 //Ожидание входящего запроса
@@ -135,7 +139,7 @@ namespace sqtest
                 string Attachment4;
                 string Attachment5;
                 string Status;
-                string SendTime;
+                //string SendTime;
                 string AddTime;
                 string domen;
 
@@ -159,7 +163,7 @@ namespace sqtest
                     //Console.WriteLine("Start of client data:");
                     // Convert the data to a string and display it on the console.
                     string s = reader.ReadToEnd();
-                    //Console.WriteLine(s);
+                    Console.WriteLine(s);
                     s = s.Replace("%40", "@");
                     string[] words = s.Split('&');
                     words[0] = words[0].Remove(0, 6);
@@ -192,7 +196,7 @@ namespace sqtest
                     Attachment4 = "hdkshkd";
                     Attachment5 = "hdkshkd";
                     Status = "Message not sent";
-                    SendTime = "";
+                    //SendTime = "";
                     AddTime = nowtime.ToString();
                     SQLiteConnection connection = new SQLiteConnection("Data Source=\\testik.db; Version=3");
                     connection.Open();
@@ -296,176 +300,13 @@ namespace sqtest
                         connection.Close();
                     }
                 }
-                SQLiteConnection newconnection = new SQLiteConnection("Data Source=\\testik.db; Version=3");
-                newconnection.Open();
-                DateTime timeadd;
-                SQLiteCommand sendmes = newconnection.CreateCommand();
-                sendmes.CommandText = ("SELECT * FROM message WHERE (status='Message not sent')");
-                SQLiteDataReader reader5 = sendmes.ExecuteReader();
-                foreach (DbDataRecord record in reader5)
-                {
-                    int id = Convert.ToInt32(record["id"]);
-                    string fromemail = record["fromemail"].ToString();
-                    string toemail = record["toemail"].ToString();
-                    string subject = record["subject"].ToString();
-                    string textemail = record["textemail"].ToString();
-                    string attachment1 = record["attachment1"].ToString();
-                    string attachment2 = record["attachment2"].ToString();
-                    string attachment3 = record["attachment3"].ToString();
-                    string attachment4 = record["attachment4"].ToString();
-                    string attachment5 = record["attachment5"].ToString();
-                    string status = record["status"].ToString();
-                    string time = record["time"].ToString();
-                    string addtime = record["addtime"].ToString();
-                    timeadd = DateTime.Now;
-                    DateTime newaddtime = Convert.ToDateTime(addtime);
-                    SQLiteCommand selectpass = newconnection.CreateCommand();
-                    selectpass.CommandText = ("SELECT password FROM users WHERE (email=@email)");
-                    selectpass.Parameters.Add("@email", System.Data.DbType.String).Value = fromemail;
-                    SQLiteDataReader reader6 = selectpass.ExecuteReader();
-                    string newpass = "";
-                    foreach (DbDataRecord newrecord in reader6)
-                    {
-                        newpass = newrecord["password"].ToString();
-                    }
-                    User J = new User(fromemail, newpass);
-                    int ind = fromemail.IndexOf('@') + 1;
-                    string newdomen = fromemail.Substring(ind);
-                    if ((timeadd.Year == newaddtime.Year) && (timeadd.Month == newaddtime.Month) && (timeadd.Day == newaddtime.Day) && (timeadd.Hour == newaddtime.Hour) && (timeadd.Minute - newaddtime.Minute >= 10))
-                    {
-                        Message myMessage = new Message(J, toemail, subject, textemail);
-                        try
-                        {
-                            myMessage.SendMessage(newdomen);
-                            Console.WriteLine("Message sent successfully!");
-                            SQLiteCommand changestatus = newconnection.CreateCommand();
-                            changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
-                            changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                            changestatus.ExecuteNonQuery();
-                            SendTime = myMessage.time.ToString();
-                            SQLiteCommand changetime = newconnection.CreateCommand();
-                            changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
-                            changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                            changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
-                            changetime.ExecuteNonQuery();
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Error!Message not sent!");
-                        }
-                    }
-                    else
-                    {
-                        if ((timeadd.Year == newaddtime.Year) && (timeadd.Month == newaddtime.Month) && (timeadd.Day == newaddtime.Day) && (timeadd.Hour - newaddtime.Hour >= 1) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
-                        {
-                            Message myMessage = new Message(J, toemail, subject, textemail);
-                            try
-                            {
-                                myMessage.SendMessage(newdomen);
-                                Console.WriteLine("Message sent successfully!");
-                                SQLiteCommand changestatus = newconnection.CreateCommand();
-                                changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
-                                changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                changestatus.ExecuteNonQuery();
-                                SendTime = myMessage.time.ToString();
-                                SQLiteCommand changetime = newconnection.CreateCommand();
-                                changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
-                                changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
-                                changetime.ExecuteNonQuery();
-                            }
-                            catch
-                            {
-                                Console.WriteLine("Error!Message not sent!");
-                            }
-                        }
-                        else
-                        {
-                            if ((timeadd.Year == newaddtime.Year) && (timeadd.Month == newaddtime.Month) && (timeadd.Day - newaddtime.Day >= 1) && (timeadd.Hour - newaddtime.Hour - 23 >= 0) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
-                            {
-                                Message myMessage = new Message(J, toemail, subject, textemail);
-                                try
-                                {
-                                    myMessage.SendMessage(newdomen);
-                                    Console.WriteLine("Message sent successfully!");
-                                    SQLiteCommand changestatus = newconnection.CreateCommand();
-                                    changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
-                                    changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                    changestatus.ExecuteNonQuery();
-                                    SendTime = myMessage.time.ToString();
-                                    SQLiteCommand changetime = newconnection.CreateCommand();
-                                    changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
-                                    changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                    changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
-                                    changetime.ExecuteNonQuery();
-                                }
-                                catch
-                                {
-                                    Console.WriteLine("Error!Message not sent!");
-                                }
-                            }
-                            else
-                            {
-                                if ((timeadd.Year == newaddtime.Year) && (timeadd.Month - newaddtime.Month >= 1) && (timeadd.Hour - newaddtime.Hour - 23 >= 0) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
-                                {
-                                    Message myMessage = new Message(J, toemail, subject, textemail);
-                                    try
-                                    {
-                                        myMessage.SendMessage(newdomen);
-                                        Console.WriteLine("Message sent successfully!");
-                                        SQLiteCommand changestatus = newconnection.CreateCommand();
-                                        changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
-                                        changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                        changestatus.ExecuteNonQuery();
-                                        SendTime = myMessage.time.ToString();
-                                        SQLiteCommand changetime = newconnection.CreateCommand();
-                                        changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
-                                        changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                        changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
-                                        changetime.ExecuteNonQuery();
-                                    }
-                                    catch
-                                    {
-                                        Console.WriteLine("Error!Message not sent!");
-                                    }
-                                }
-                                else
-                                {
-                                    if ((timeadd.Year - newaddtime.Year >= 1) && (timeadd.Month - newaddtime.Month - 12 >= 1) && (timeadd.Hour - newaddtime.Hour - 23 >= 0) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
-                                    {
-                                        Message myMessage = new Message(J, toemail, subject, textemail);
-                                        try
-                                        {
-                                            myMessage.SendMessage(newdomen);
-                                            Console.WriteLine("Message sent successfully!");
-                                            SQLiteCommand changestatus = newconnection.CreateCommand();
-                                            changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
-                                            changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                            changestatus.ExecuteNonQuery();
-                                            SendTime = myMessage.time.ToString();
-                                            SQLiteCommand changetime = newconnection.CreateCommand();
-                                            changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
-                                            changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
-                                            changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
-                                            changetime.ExecuteNonQuery();
-                                        }
-                                        catch
-                                        {
-                                            Console.WriteLine("Error!Message not sent!");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                newconnection.Close();
+                
                 //Возвращаем ответ
                 using (Stream output = response.OutputStream)
                 { // создаем ответ в виде кода html
                     string responseStr = @"<!DOCTYPE HTML>
-<html><head></head><body>
-<form method=""post"" action=""/login"">
+<html><head><meta charset = ""utf-8""></head><body>
+ <form method=""post"" action=""/login"">
 <p><b>Login: </b><br>
 <input type=""text"" name=""login"" size=""40""></p>
 <p><b>Password: </b><br>
@@ -509,6 +350,178 @@ namespace sqtest
             //    string time = record["time"].ToString();
             //}
             //connection.Close();
+        }
+        static void CheckDBToSend()
+        {
+            while (true)
+            { 
+            //Console.WriteLine("checking db");
+            string SendTime = "";
+            SQLiteConnection newconnection = new SQLiteConnection("Data Source=\\testik.db; Version=3");
+            newconnection.Open();
+            DateTime timeadd;
+            SQLiteCommand sendmes = newconnection.CreateCommand();
+            sendmes.CommandText = ("SELECT * FROM message WHERE (status='Message not sent')");
+            SQLiteDataReader reader5 = sendmes.ExecuteReader();
+            foreach (DbDataRecord record in reader5)
+            {
+                int id = Convert.ToInt32(record["id"]);
+                string fromemail = record["fromemail"].ToString();
+                string toemail = record["toemail"].ToString();
+                string subject = record["subject"].ToString();
+                string textemail = record["textemail"].ToString();
+                string attachment1 = record["attachment1"].ToString();
+                string attachment2 = record["attachment2"].ToString();
+                string attachment3 = record["attachment3"].ToString();
+                string attachment4 = record["attachment4"].ToString();
+                string attachment5 = record["attachment5"].ToString();
+                string status = record["status"].ToString();
+                string time = record["time"].ToString();
+                string addtime = record["addtime"].ToString();
+                timeadd = DateTime.Now;
+                DateTime newaddtime = Convert.ToDateTime(addtime);
+                SQLiteCommand selectpass = newconnection.CreateCommand();
+                selectpass.CommandText = ("SELECT password FROM users WHERE (email=@email)");
+                selectpass.Parameters.Add("@email", System.Data.DbType.String).Value = fromemail;
+                SQLiteDataReader reader6 = selectpass.ExecuteReader();
+                string newpass = "";
+                foreach (DbDataRecord newrecord in reader6)
+                {
+                    newpass = newrecord["password"].ToString();
+                }
+                User J = new User(fromemail, newpass);
+                int ind = fromemail.IndexOf('@') + 1;
+                string newdomen = fromemail.Substring(ind);
+                if ((timeadd.Year == newaddtime.Year) && (timeadd.Month == newaddtime.Month) && (timeadd.Day == newaddtime.Day) && (timeadd.Hour == newaddtime.Hour) && (timeadd.Minute - newaddtime.Minute >= 10))
+                {
+                    Message myMessage = new Message(J, toemail, subject, textemail);
+                    try
+                    {
+                        myMessage.SendMessage(newdomen);
+                        Console.WriteLine("Message sent successfully!");
+                        SQLiteCommand changestatus = newconnection.CreateCommand();
+                        changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
+                        changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                        changestatus.ExecuteNonQuery();
+                        SendTime = myMessage.time.ToString();
+                        SQLiteCommand changetime = newconnection.CreateCommand();
+                        changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
+                        changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                        changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
+                        changetime.ExecuteNonQuery();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Error!Message not sent!");
+                    }
+                }
+                else
+                {
+                    if ((timeadd.Year == newaddtime.Year) && (timeadd.Month == newaddtime.Month) && (timeadd.Day == newaddtime.Day) && (timeadd.Hour - newaddtime.Hour >= 1) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
+                    {
+                        Message myMessage = new Message(J, toemail, subject, textemail);
+                        try
+                        {
+                            myMessage.SendMessage(newdomen);
+                            Console.WriteLine("Message sent successfully!");
+                            SQLiteCommand changestatus = newconnection.CreateCommand();
+                            changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
+                            changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                            changestatus.ExecuteNonQuery();
+                            SendTime = myMessage.time.ToString();
+                            SQLiteCommand changetime = newconnection.CreateCommand();
+                            changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
+                            changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                            changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
+                            changetime.ExecuteNonQuery();
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Error!Message not sent!");
+                        }
+                    }
+                    else
+                    {
+                        if ((timeadd.Year == newaddtime.Year) && (timeadd.Month == newaddtime.Month) && (timeadd.Day - newaddtime.Day >= 1) && (timeadd.Hour - newaddtime.Hour - 23 >= 0) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
+                        {
+                            Message myMessage = new Message(J, toemail, subject, textemail);
+                            try
+                            {
+                                myMessage.SendMessage(newdomen);
+                                Console.WriteLine("Message sent successfully!");
+                                SQLiteCommand changestatus = newconnection.CreateCommand();
+                                changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
+                                changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                                changestatus.ExecuteNonQuery();
+                                SendTime = myMessage.time.ToString();
+                                SQLiteCommand changetime = newconnection.CreateCommand();
+                                changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
+                                changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                                changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
+                                changetime.ExecuteNonQuery();
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Error!Message not sent!");
+                            }
+                        }
+                        else
+                        {
+                            if ((timeadd.Year == newaddtime.Year) && (timeadd.Month - newaddtime.Month >= 1) && (timeadd.Hour - newaddtime.Hour - 23 >= 0) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
+                            {
+                                Message myMessage = new Message(J, toemail, subject, textemail);
+                                try
+                                {
+                                    myMessage.SendMessage(newdomen);
+                                    Console.WriteLine("Message sent successfully!");
+                                    SQLiteCommand changestatus = newconnection.CreateCommand();
+                                    changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
+                                    changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                                    changestatus.ExecuteNonQuery();
+                                    SendTime = myMessage.time.ToString();
+                                    SQLiteCommand changetime = newconnection.CreateCommand();
+                                    changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
+                                    changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                                    changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
+                                    changetime.ExecuteNonQuery();
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Error!Message not sent!");
+                                }
+                            }
+                            else
+                            {
+                                if ((timeadd.Year - newaddtime.Year >= 1) && (timeadd.Month - newaddtime.Month - 12 >= 1) && (timeadd.Hour - newaddtime.Hour - 23 >= 0) && (timeadd.Minute - newaddtime.Minute - 50 >= 0))
+                                {
+                                    Message myMessage = new Message(J, toemail, subject, textemail);
+                                    try
+                                    {
+                                        myMessage.SendMessage(newdomen);
+                                        Console.WriteLine("Message sent successfully!");
+                                        SQLiteCommand changestatus = newconnection.CreateCommand();
+                                        changestatus.CommandText = ("UPDATE message SET status='Message sent' WHERE id=@id;");
+                                        changestatus.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                                        changestatus.ExecuteNonQuery();
+                                        SendTime = myMessage.time.ToString();
+                                        SQLiteCommand changetime = newconnection.CreateCommand();
+                                        changetime.CommandText = ("UPDATE message SET time=@time WHERE id=@id;");
+                                        changetime.Parameters.Add("@id", System.Data.DbType.Int32).Value = id;
+                                        changetime.Parameters.Add("@time", System.Data.DbType.String).Value = SendTime;
+                                        changetime.ExecuteNonQuery();
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Error!Message not sent!");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            newconnection.Close();
+        }
         }
     }
 }
