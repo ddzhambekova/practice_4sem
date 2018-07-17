@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>sqtest</name>
+    </assembly>
+    <members>
+        <member name="T:sqtest.User">
+            <summary>
+            Класс, содержащий e-mail пользователя и пароль к нему
+            </summary>
+        </member>
+        <member name="T:sqtest.Message">
+            <summary>
+            Класс, содержащий пользователя-отправителя, e-mail получателя,
+            тему сообщения, текст сообщения, время отправки сообщения
+            </summary>
+        </member>
+        <member name="M:sqtest.Message.#ctor(sqtest.User,System.String,System.String,System.String)">
+            <summary>
+            Конструктор класса Message
+            </summary>
+            <param name="user">Пользователь, отправляющий сообщение</param>
+            <param name="to">E-mail получателя</param>
+            <param name="Subject">Тема сообщения</param>
+            <param name="TextBody">Текст сообщения</param>
+        </member>
+        <member name="M:sqtest.Message.SendMessage(System.String)">
+            <summary>
+            Метод, отправляющий сообщение через SMTP-сервер
+            </summary>
+            <param name="domen">Домен адреса отправителя, позволяющий определить
+            SMTP-сервер, через который необходимо послать сообщение</param>
+        </member>
+        <member name="M:sqtest.Program.CheckDBToSend">
+            <summary>
+            Метод, содержащий бесконечный цикл, который проверяет наличие в таблице message
+            сообщений со статусом "не отправлено" и с добавления которых прошло 10 минут и более
+            </summary>
+        </member>
+        <member name="M:sqtest.Program.CheckDBToDelete">
+            <summary>
+            Метод, содержащий бесконечный цикл, который проверяет наличие в таблице message
+            сообщений со статусом "отправлено" и с отправления которых прошло 7 дней и более
+            </summary>
+        </member>
+    </members>
+</doc>

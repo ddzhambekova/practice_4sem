@@ -12,3 +12,4 @@ C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtes
 C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\obj\Debug\sqtest.exe
 C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\obj\Debug\sqtest.pdb
 C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\obj\Debug\sqtest.csprojResolveAssemblyReference.cache
+C:\Users\dns\Documents\Visual Studio 2015\Projects\практика\sqtest\sqtest\bin\Debug\sqtest.XML
